@@ -100,7 +100,7 @@ public class RecordsService {
         if(human.isEmpty()){
             ratio = 0;
         }
-        else ratio = mutant.size()/human.size();
+        else ratio = (double)mutant.size()/(double)human.size();
         return new specimenRecords(mutant.size(), human.size(), ratio);
     }
     
