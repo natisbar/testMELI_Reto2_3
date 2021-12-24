@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.testMELI.testMELI.Controller;
+package com.testMELI.testMELI.app.Controller;
 
 import com.testMELI.testMELI.app.Reports.IndividualTypeRecords;
 import com.testMELI.testMELI.app.entities.Records;
