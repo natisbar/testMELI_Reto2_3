@@ -44,19 +44,21 @@ public class RecordsController {
     
     /**
      * POST
-     * @param reservation
+     * @param records
      * @return 
      */
     @PostMapping("/mutant")
-//    @ResponseStatus(HttpStatus.CREATED) //Anotacion que retorna el status
     @ResponseBody
     public ResponseEntity save(@RequestBody Records records){
-        return recordsService.save(records);
+        if(recordsService.save(records)){
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        else return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
     
     @GetMapping("/stats")
-    public IndividualTypeRecords getIndividualType(){
-        return recordsService.getIndividualTypeRecords();
+    public IndividualTypeRecords getSpecimen(){
+        return recordsService.getSpecimen();
     }
     
 }

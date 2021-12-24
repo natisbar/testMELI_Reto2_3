@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,6 +25,8 @@ public class RecordsService {
     
     @Autowired
     private RecordsRepository repository;
+    static final int SEQUENCES_NUMBER_LETTERS = 3;
+    static final int CONSECUTIVE_NUMBER = 2;
     
     /**
      * GET
@@ -41,97 +43,109 @@ public class RecordsService {
      * @param records
      * @return
      */
-    public ResponseEntity save(Records records) {
+    public boolean save(Records records) {
         
         String[] dna = records.getDna();
-        String baseNitrogenada = dna[0];
-        boolean validarSecuencia = false;
-        boolean validarBaseIndividual = false;
-        String individualType;
+        String nitrogenBase = dna[0];
+        boolean validateSequence = false;
+        boolean validateNitrogenBase = false;
+        String specimen;
         
-        //Validación tamaño de todas las bases, que sean iguales para que se cumpla la matriz.
+        //Size validation of all bases. It is necessary for a matrix to exist
         for (String dna1 : dna) {
-            if (baseNitrogenada.length() != dna1.length()) {
-                validarSecuencia = true;
+            if (nitrogenBase.length() != dna1.length()) {
+                validateSequence = true;
             }
-        //Validación de que cada base tenga unicamente las letras: A, C, G o T
-            for (int j = 0; j<baseNitrogenada.length(); j++) {
+        //Validation of the letters of each base: A, C, G o T
+            for (int j = 0; j<nitrogenBase.length(); j++) {
                 if (!(dna1.charAt(j) == 'A' || dna1.charAt(j) == 'C' || dna1.charAt(j) == 'G' || dna1.charAt(j) == 'T')) {
-                    validarBaseIndividual = true;
+                    validateNitrogenBase = true;
                 }
             }
         }
         
-        if (records.getId() == null && !validarSecuencia && !validarBaseIndividual) {
-            if(isMutant(dna, baseNitrogenada)){
-                individualType = "mutant";
+        if (records.getId() == null && !validateSequence && !validateNitrogenBase) {
+            if(isMutant(dna, nitrogenBase)){
+                specimen = "mutant";
             }
-            else individualType = "human";
+            else specimen = "human";
             
-            records.setIndividualType(individualType);
+            records.setSpecimen(specimen);
             repository.save(records);
-            return (ResponseEntity) ResponseEntity.status(HttpStatus.OK).body(null);
-        } else if(records.getId() != null && !validarSecuencia && !validarBaseIndividual){
+            return true;
+        } else if(records.getId() != null && !validateSequence && !validateNitrogenBase){
             Optional<Records> resultado = repository.getRecords(records.getId());
             if (resultado.isPresent()) {
-                return (ResponseEntity) ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+                return false;
             } else {
-                    if(isMutant(dna, baseNitrogenada)){
-                        individualType = "mutant";
+                    if(isMutant(dna, nitrogenBase)){
+                        specimen = "mutant";
                     }
-                    else individualType = "human";
+                    else specimen = "human";
 
-                    records.setIndividualType(individualType);
+                    records.setSpecimen(specimen);
                     repository.save(records);
-                    return (ResponseEntity) ResponseEntity.status(HttpStatus.OK).body(null);              
+                    return true;              
             }
         }
         else {
-            return (ResponseEntity) ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return false;
         }
     }
     
-    public IndividualTypeRecords getIndividualTypeRecords() {
+    public IndividualTypeRecords getSpecimen() {
         List<Records> mutant = repository.RecordsIndividualType("mutant");
         List<Records> human = repository.RecordsIndividualType("human");
         return new IndividualTypeRecords(mutant.size(), human.size(),mutant.size()/human.size());
     }
     
-    //Función para validar si la secuencia de dna es de un mutante o un humano.
-    public static boolean isMutant(String[] dna, String baseNitrogenada){
-        boolean mutant;
-        /*desde aquí se llaman las funciones horizontal, vertical y diagonal positiva y negativa, las
-        cuales retornan el número de consecutivos.*/
-        int horizontal = horizontal(dna);
-        int vertical = vertical(dna, baseNitrogenada);
-        int diagonal1 = diagonal1(dna, baseNitrogenada);
-        int diagonal2 = diagonal2(dna, baseNitrogenada);
-        int sumaConsecutivos = horizontal + vertical + diagonal1 + diagonal2;
-        
-        mutant = sumaConsecutivos>=2;
-        
-        return mutant;
+    //Method to validate if the DNA sequence is from a mutant or a human.
+    public static boolean isMutant(String[] dna, String nitrogenBase){
+        int consecutiveSum = 0;
+        /*from this function, the functions horizontal, vertical and diagonal(1 and 2) are called. 
+        These functions return the number of consecutive found.
+        If in any of the first methods 2 or more nitrogen bases are found, then the other 
+        remaining methods are not called*/
+        consecutiveSum = consecutiveSum + horizontal(dna);
+        if(consecutiveSum>=CONSECUTIVE_NUMBER){
+            return true;
+        }
+        else{
+            consecutiveSum = consecutiveSum + vertical(dna, nitrogenBase);
+            if(consecutiveSum>=CONSECUTIVE_NUMBER){
+                return true;
+            }
+            else {
+                consecutiveSum = consecutiveSum + diagonal1(dna, nitrogenBase);
+                if(consecutiveSum>=CONSECUTIVE_NUMBER){
+                    return true;
+                }
+                else{
+                    consecutiveSum = consecutiveSum + diagonal2(dna, nitrogenBase);
+                    return consecutiveSum>=CONSECUTIVE_NUMBER;
+                }
+            } 
+        }
     }
     
-    //Función para validar bases horizontalmente
-    public static int horizontal(String [] dna){
-        int conteo = 0;
-        char letra = ' ';
+    //Method to validate nitrogen bases horizontally
+    private static int horizontal(String [] dna){
+        int count = 0;
+        char letter = ' ';
         int numHorizontal = 0;
-        for (String baseNitrogenada : dna) {
-            /*Solo se validan las bases que tengan mas de 3 letras, teniendo en cuenta que a está
-            función llega el arreglo de diagonales.*/
-            if (baseNitrogenada.length()>3) {
-                for (int j = 0; j<baseNitrogenada.length(); j++) {
-                    if (letra == baseNitrogenada.charAt(j)) {
-                        conteo++;
-                        if(conteo == 3){
+        for (String nitrogenBase : dna) {
+            /*Only nitrogenous bases that have more than 3 letters are validated. This method receive
+            the array formed by the diagonals*/
+            if (nitrogenBase.length()>SEQUENCES_NUMBER_LETTERS) {
+                for (int j = 0; j<nitrogenBase.length(); j++) {
+                    if (letter == nitrogenBase.charAt(j)) {
+                        count++;
+                        if(count == SEQUENCES_NUMBER_LETTERS){
                             numHorizontal++;
-//                            System.out.println(dna[i]);
                         }
                     } else {
-                        conteo = 0;
-                        letra = baseNitrogenada.charAt(j);
+                        count = 0;
+                        letter = nitrogenBase.charAt(j);
                     }
                 }
             }
@@ -139,37 +153,37 @@ public class RecordsService {
         return numHorizontal;
     }
 
-    //Función para validar bases verticalmente
-    public static int vertical(String [] dna, String baseNitrogenada){
-        int conteo = 0;
-        char letra = ' ';
+    //Function to validate nitrogenous bases vertically
+    private static int vertical(String [] dna, String nitrogenBase){
+        int count = 0;
+        char letter = ' ';
         int numVertical = 0;
-        for(int j=0; j<baseNitrogenada.length(); j++){
+        for(int j=0; j<nitrogenBase.length(); j++){
             for (String dna1 : dna) {
-                if (letra == dna1.charAt(j)) {
-                    conteo++;
-                    if(conteo == 3){
+                if (letter == dna1.charAt(j)) {
+                    count++;
+                    if(count == SEQUENCES_NUMBER_LETTERS){
                         numVertical++;
                     }
                 } else {
-                    conteo = 0;
-                    letra = dna1.charAt(j);
+                    count = 0;
+                    letter = dna1.charAt(j);
                 }
             }
         }
         return numVertical;
     }
 
-    //Función para validar bases diagonales negativas
-    public static int diagonal1(String[] dna, String baseNitrogenada){
-        //se crea arrayList con el numero de bases posibles en diagonal
+    //Method to validate nitrogenous bases of negative diagonals
+    private static int diagonal1(String[] dna, String nitrogenBase){
+        //an arraylist is created with the number of possible nitrogenous bases diagonally.
         ArrayList<String> diagonal1 = new ArrayList<>();
-        for(int i=0; i<(dna.length+baseNitrogenada.length()-1); i++){
+        for(int i=0; i<(dna.length+nitrogenBase.length()-1); i++){
             diagonal1.add("");
         }
         String dataPosition;
-        //se empiezan a organizar las bases diagonales teniendo en cuenta relación de i con j (relación con resta)
-        for(int j=0; j<baseNitrogenada.length(); j++){
+        //Diagonal bases are organized according to the relation of i with j (relation with subtraction)
+        for(int j=0; j<nitrogenBase.length(); j++){
             for(int i=0; i<dna.length; i++){
                 if(i==j){
                     dataPosition = diagonal1.get(0);
@@ -186,40 +200,38 @@ public class RecordsService {
             }
         }
 
-        /*se convierte el arrayList en un array regular y se envía a la función horizontal, la 
-        cual retorna el número de consecutivos encontrados*/
+        /*convert the arraylist to array, and send it to the horizontal method*/
         String[] diagonal = diagonal1.toArray(new String[0]);
         return horizontal(diagonal);
     }
     
-    //Función para validar bases diagonales positivas
-    public static int diagonal2(String[] dna, String baseNitrogenada){
-        //se crea arrayList con el numero de bases posibles en diagonal
+    //Method to validate nitrogenous bases of positive diagonals
+    private static int diagonal2(String[] dna, String nitrogenBase){
+        //an arraylist is created with the number of possible nitrogenous bases diagonally.
         ArrayList<String> diagonal1 = new ArrayList<>();
-        for(int i=0; i<(dna.length+baseNitrogenada.length()-1); i++){
+        for(int i=0; i<(dna.length+nitrogenBase.length()-1); i++){
             diagonal1.add("");
         }
         String dataPosition;
-        //se empiezan a organizar las bases diagonales teniendo en cuenta relación de i con j (relación con suma)
-        for(int j=baseNitrogenada.length()-1; j>=0; j--){
+        //Diagonal bases are organized according to the relation of i with j (relation with sum)
+        for(int j=nitrogenBase.length()-1; j>=0; j--){
             for(int i=0; i<dna.length; i++){
-                if(i+j == baseNitrogenada.length()-1){
+                if(i+j == nitrogenBase.length()-1){
                     dataPosition = diagonal1.get(i+j);
                     diagonal1.set(i+j, dataPosition+dna[i].charAt(j));
                 }
-                else if(i+j > baseNitrogenada.length()-1){
+                else if(i+j > nitrogenBase.length()-1){
                     dataPosition = diagonal1.get(i+j);
                     diagonal1.set(i+j, dataPosition+dna[i].charAt(j));
                 }
-                else if(i+j < baseNitrogenada.length()-1){
+                else if(i+j < nitrogenBase.length()-1){
                     dataPosition = diagonal1.get(i+j);
                     diagonal1.set(i+j, dataPosition+dna[i].charAt(j));
                 }
             }
         }
         
-        /*se convierte el arrayList en un array regular y se envía a la función horizontal, la 
-        cual retorna el número de consecutivos encontrados*/
+        /*convert the arraylist to array, and send it to the horizontal method*/
         String[] diagonal = diagonal1.toArray(new String[0]);
         return horizontal(diagonal);
     }

@@ -31,5 +31,5 @@ public class Records implements Serializable{
     private Integer id;
     @Column(nullable=false,unique=true)
     private String[] dna;
-    private String individualType;
+    private String specimen;
 }
