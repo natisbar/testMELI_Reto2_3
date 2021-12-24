@@ -11,4 +11,6 @@ http://129.151.124.68:8080/api/mutant
 Si se desea conocer la relación de mutantes y humanos, se usa el servicio GET /stats
 http://129.151.124.68:8080/api/stats
 
-NOTA: Si se presenta alguna dificultad con la instancia, por favor hacermelo saber para ejecutarla nuevamente.
+NOTA: 
+1. Si se presenta alguna dificultad con la instancia, por favor hacermelo saber para ejecutarla nuevamente.
+2. Antes de ejecutar cualquier tipo de prueba masivas, por favor hacer unas pequeñas peticiones antes, de modo que la primera no se pierda, dado que siempre tarda mas que las demas, despues de estar un tiempo sin usarse.
