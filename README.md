@@ -17,3 +17,4 @@ http://129.151.124.68:8080/api/stats
 NOTA: 
 1. Si se presenta alguna dificultad con la instancia, por favor hacermelo saber para ejecutarla nuevamente.
 2. Antes de ejecutar cualquier tipo de prueba masivas, por favor hacer unas pequeñas peticiones antes, de modo que la primera no se pierda (dado que siempre tarda mas que las demas, despues de estar un tiempo sin usarse).
+3. Si se desea lograr diferentes combinaciones de dna (mas faciles a la vista), puede usar el excel a continuación, solo es necesario que ajuste las letras de la matriz, y se generará el arreglo en la columna J2. https://docs.google.com/spreadsheets/d/1zsPadZQQ2UeprPl-dq9GTFZQWn25QijQTVwYZyjV9w4/edit?usp=sharing
