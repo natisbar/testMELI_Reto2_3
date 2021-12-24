@@ -94,9 +94,14 @@ public class RecordsService {
     }
     
     public specimenRecords getSpecimen() {
+        double ratio;
         List<Records> mutant = repository.RecordsSpecimen("mutant");
         List<Records> human = repository.RecordsSpecimen("human");
-        return new specimenRecords(mutant.size(), human.size(),mutant.size()/human.size());
+        if(human.isEmpty()){
+            ratio = 0;
+        }
+        else ratio = mutant.size()/human.size();
+        return new specimenRecords(mutant.size(), human.size(), ratio);
     }
     
     //Method to validate if the DNA sequence is from a mutant or a human.
