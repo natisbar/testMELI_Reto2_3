@@ -9,6 +9,6 @@ Si se desea validar un ADN para identificar si se trata de un humano un mutante,
 http://129.151.124.68:8080/api/mutant
 
 Si se desea conocer la relación de mutantes y humanos, se usa el servicio GET /stats
-http://129.151.124.68:8080/api/mutant
+http://129.151.124.68:8080/api/stats
 
 NOTA: Si se presenta alguna dificultad con la instancia, por favor hacermelo saber para ejecutarla nuevamente.
