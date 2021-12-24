@@ -7,6 +7,9 @@ http://129.151.124.68:8080/api/all
 
 Si se desea validar un ADN para identificar si se trata de un humano un mutante, se usa el servicio POST /mutant.
 http://129.151.124.68:8080/api/mutant
+{
+“dna”:["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
 
 Si se desea conocer la relación de mutantes y humanos, se usa el servicio GET /stats
 http://129.151.124.68:8080/api/stats
