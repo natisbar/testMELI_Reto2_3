@@ -25,12 +25,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor  //Constructor con todos los argumentos
 @NoArgsConstructor   //Constructor vacio
 @Entity
-@Table(name="registros", uniqueConstraints={@UniqueConstraint(columnNames={"dna"})})
+@Table(name="registros")
 public class Records implements Serializable{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)  //genera automáticamente el ID
     private Integer id;
-    @Column(nullable=false,length=100,unique=true)
+    @Column(nullable=false)
     private String[] dna;
+    @Column(nullable=false,unique=true)
+    private String dnaString;
     private String specimen;
 }

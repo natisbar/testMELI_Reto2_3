@@ -44,8 +44,12 @@ public class RecordsService {
      * @return
      */
     public boolean save(Records records) {
-        
+        String dnaString = "";
         String[] dna = records.getDna();
+        for (String dna1 : dna) {
+            dnaString = dnaString + dna1 + " ";
+        }
+        records.setDnaString(dnaString);
         String nitrogenBase = dna[0];
         boolean validateSequence = false;
         boolean validateNitrogenBase = false;
