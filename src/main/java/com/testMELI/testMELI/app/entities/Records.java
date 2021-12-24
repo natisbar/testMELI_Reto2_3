@@ -30,7 +30,7 @@ public class Records implements Serializable{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)  //genera automáticamente el ID
     private Integer id;
-    @Column(nullable=false)
+    @Column(nullable=false,length=100,unique=true)
     private String[] dna;
     private String specimen;
 }
