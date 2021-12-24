@@ -33,8 +33,8 @@ public class RecordsRepository {
         return recordsCrudRepository.findById(recordsId);
     }
     
-    public List<Records> RecordsIndividualType(String individualType) {
-        return recordsCrudRepository.findAllByIndividualType(individualType);
+    public List<Records> RecordsSpecimen(String recordsSpecimen) {
+        return recordsCrudRepository.findAllBySpecimen(recordsSpecimen);
     }
 
 }

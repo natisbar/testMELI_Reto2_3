@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data  //trae getters y setters
 @AllArgsConstructor  //Constructor con todos los argumentos
 @NoArgsConstructor   //Constructor vacio
-public class IndividualTypeRecords {
+public class specimenRecords {
     private int count_mutant_dna;
     private int count_human_dna;
     private double ratio;

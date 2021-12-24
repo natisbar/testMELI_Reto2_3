@@ -5,7 +5,7 @@
  */
 package com.testMELI.testMELI.app.Controller;
 
-import com.testMELI.testMELI.app.Reports.IndividualTypeRecords;
+import com.testMELI.testMELI.app.Reports.specimenRecords;
 import com.testMELI.testMELI.app.entities.Records;
 import com.testMELI.testMELI.app.services.RecordsService;
 import java.util.List;
@@ -57,7 +57,7 @@ public class RecordsController {
     }
     
     @GetMapping("/stats")
-    public IndividualTypeRecords getSpecimen(){
+    public specimenRecords getSpecimen(){
         return recordsService.getSpecimen();
     }
     

@@ -5,7 +5,7 @@
  */
 package com.testMELI.testMELI.app.services;
 
-import com.testMELI.testMELI.app.Reports.IndividualTypeRecords;
+import com.testMELI.testMELI.app.Reports.specimenRecords;
 import com.testMELI.testMELI.app.entities.Records;
 import com.testMELI.testMELI.app.repositories.RecordsRepository;
 import java.util.ArrayList;
@@ -93,10 +93,10 @@ public class RecordsService {
         }
     }
     
-    public IndividualTypeRecords getSpecimen() {
-        List<Records> mutant = repository.RecordsIndividualType("mutant");
-        List<Records> human = repository.RecordsIndividualType("human");
-        return new IndividualTypeRecords(mutant.size(), human.size(),mutant.size()/human.size());
+    public specimenRecords getSpecimen() {
+        List<Records> mutant = repository.RecordsSpecimen("mutant");
+        List<Records> human = repository.RecordsSpecimen("human");
+        return new specimenRecords(mutant.size(), human.size(),mutant.size()/human.size());
     }
     
     //Method to validate if the DNA sequence is from a mutant or a human.

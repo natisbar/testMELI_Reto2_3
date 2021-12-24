@@ -15,5 +15,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface RecordsCrudRepository extends CrudRepository<Records, Integer> {
     
-    public List<Records> findAllByIndividualType(String status);
+    public List<Records> findAllBySpecimen(String status);
 }
